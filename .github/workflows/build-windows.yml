@@ -37,7 +37,18 @@ jobs:
           Write-Host $projectDir
 
           "PROJECT_DIR=$projectDir" >> $env:GITHUB_ENV
-
+      - name: Fix Tauri Windows installer mode
+        shell: pwsh
+        run: |
+          $config = Get-ChildItem -Path "desktop-project" -Filter "tauri.conf.json" -Recurse -File | Select-Object -First 1
+          if (-not $config) {
+            Write-Error "tauri.conf.json nicht gefunden."
+            exit 1
+          }
+          $json = Get-Content $config.FullName -Raw
+          $json = $json -replace '"installMode"\s*:\s*"perUser"', '"installMode": "currentUser"'
+          Set-Content -Path $config.FullName -Value $json -Encoding utf8
+          Write-Host "Tauri installMode auf currentUser gesetzt."
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
