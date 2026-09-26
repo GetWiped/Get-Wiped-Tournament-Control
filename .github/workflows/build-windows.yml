@@ -62,7 +62,14 @@ jobs:
         run: |
           Set-Location "$env:PROJECT_DIR"
           npm install
-
+      - name: Create Windows icon
+        shell: pwsh
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: |
+          New-Item -ItemType Directory -Force -Path "src-tauri/icons" | Out-Null
+          $b64 = "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAC2klEQVR42u2bTUhUURTHf/NmxqbJpZgfSZYG9jWN44x94CIsxJSEhLKFuJAgcxEug2pVgbkSgwRBF9VCEIyghCQiK/U1YyN9WKIiEkE6tRxJcMZpIQ0pU/PGXMx7c87qPe69j/P/nXcP9753jynDXhAhhU0hxS3lAVgSHXC3YibpRTUPFmrua9KaA/QgfCMg4gLQo/BEQChGFx9Ph2J08fH0xJwC8cQnkmSSKdqxfLds1lxKtvmu9Q1WtBLUg3gt/q7Xpxgl8hv1WzFy4tOSJxSjRl+r/7IZSnRAQ+N5Bl/2M/C8j96H3eTkZgFwp6uNmtpT0X5Dbx5z8/bV6P2ttmucPlOpbwDHy8uorqmg+sQ5qsrPMvLKS3tnKwA+1U9xiQOA9PRthEJhXB5ndKzL40QdHtM3gOaWC7TeaGd5OQRAT9cDln4uYTab8al+nK6DALhLi3n29AV2u420LWlYrRbsdhvfAz/0vR0u2ruHiY+T0ftgcJGGuiYAJj9PszM/D5PJhOeIC3XYR1Z2Jo5D+wiHVxh/+0H/3wMsFnP0+tLlRiqrTpKZlcFRZwWRSISZqVkKCnfhcjvo7OgmZ0c2JaXFhEMhRl979Z8EZ2fm2H+gCIDOjh4a6prIy8uNtntVPy63A9tWG8HgIj7Vj9vjxOVxMjri0z+Aez29XLnegtW6+uI0XqwnHF6JtvtUP3X1tUxOTAEwPTXL7sJ8snO282Xuq/4B9PU+4v27Twx5n9A/cJ/5bwFC4VC0fcw3zrGyw6ijq9k+EomwMB9gYT6QtOuANdvhWEthva8E4+mSlaAAEAACQAAIAAEgAASAABAAAkAACAABIAAEgAAQAAJAAAgAASAABIAAEAACAND/2cF4/q8BYIQ/wVrsT53KZlDUa/RjAtB6yFiv4v/ruPzvh+q5XmC9/bVmyIgHp2MFTkmks9HEx02CRoHwLx1SN5ho8XTKVo7KXsCg9gsaPvf/jKQ9fgAAAABJRU5ErkJggg=="
+          [IO.File]::WriteAllBytes("src-tauri/icons/icon.png", [Convert]::FromBase64String($b64))
+          npx tauri icon "src-tauri/icons/icon.png"
       - name: Build Windows application
         shell: pwsh
         run: |
